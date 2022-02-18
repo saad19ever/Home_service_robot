@@ -81,11 +81,11 @@ int main( int argc, char** argv )
     for (int i = 0 ; i < 3 ; i++ ) {
          P_error[i]= abs(Pick_up[i]-pose[i]);
     }
-    ROS_INFO("x: %f , y: %f ",P_error[0]  ,P_error [1]);
+   
     //wait until robot reaches Pick up location
    if (P_error[0] <= 0.03 && P_error[1] <= 0.03 ){
    
-     ROS_INFO("x: %f , y: %f ",P_error[0]  ,P_error [1]);
+   ROS_INFO("Robot successfully moved to the pick up location");
    
      //simulate pick up by deleting marker and waiting 5 seconds
    marker.action = visualization_msgs::Marker::DELETE;
@@ -111,7 +111,7 @@ int main( int argc, char** argv )
      while (!(D_error[0] <= 0.03) || !(D_error [1] <= 0.03))
      {  
         ROS_INFO("heading to drop off Location");
-          ROS_INFO("x: %f , y: %f ",D_error[0]  ,D_error [1]);
+      
         //calculate robot pose relative drop off location error
         for (int i = 0 ; i < 3 ; i++ ) {
          D_error[i]=abs(Drop_off[i]-pose[i]);
@@ -120,7 +120,7 @@ int main( int argc, char** argv )
            ros::Duration(0.5).sleep();
      }
     //publish marker
-    ROS_INFO("x: %f , y: %f ",D_error[0]  ,D_error [1]);
+    ROS_INFO("Robot successfully moved to the drop off Location");
     marker_pub.publish(marker);
     ros::Duration(200).sleep(); 
     }

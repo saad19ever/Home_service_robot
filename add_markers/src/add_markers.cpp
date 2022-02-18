@@ -1,6 +1,6 @@
 #include <ros/ros.h>
 #include <visualization_msgs/Marker.h>
-#include <nav_msgs/Odometry.h>
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <cstdlib>
 
 double pose[3];
@@ -9,7 +9,7 @@ double D_error[3]={1,1};
 double Drop_off[3];
 double Pick_up[3];
 
-void OdomCallback (const nav_msgs::Odometry::ConstPtr& msg)
+void AMCLCallback (const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg)
 {
        pose[0] = msg->pose.pose.position.x;
        pose[1] = msg->pose.pose.position.y; 
@@ -23,7 +23,7 @@ int main( int argc, char** argv )
   ros::NodeHandle n;
   ros::Rate r(1);
   ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
-   ros::Subscriber odom_sub = n.subscribe("odom",10,OdomCallback);
+   ros::Subscriber amcl_sub = n.subscribe("amcl_pose",10,AMCLCallback);
   
    
   // Set our initial shape type to be a cube
@@ -54,7 +54,7 @@ int main( int argc, char** argv )
     marker.scale.z = 0.2;
 
     // Set the color -- be sure to set alpha to something non-zero!
-    marker.color.r = 0.0f;
+    marker.color.r = 1.0f;
     marker.color.g = 1.0f;
     marker.color.b = 0.0f;
     marker.color.a = 1.0;
@@ -83,7 +83,7 @@ int main( int argc, char** argv )
     }
     ROS_INFO("x: %f , y: %f ",P_error[0]  ,P_error [1]);
     //wait until robot reaches Pick up location
-   if (P_error[0] <= 0.5 && P_error[1] <= 0.5 ){
+   if (P_error[0] <= 0.03 && P_error[1] <= 0.03 ){
    
      ROS_INFO("x: %f , y: %f ",P_error[0]  ,P_error [1]);
    
@@ -108,7 +108,7 @@ int main( int argc, char** argv )
     marker.pose.orientation.w = Drop_off[2];
     
       
-     while (!(D_error[0] <= 0.5) || !(D_error [1] <= 0.5))
+     while (!(D_error[0] <= 0.03) || !(D_error [1] <= 0.03))
      {  
         ROS_INFO("heading to drop off Location");
           ROS_INFO("x: %f , y: %f ",D_error[0]  ,D_error [1]);

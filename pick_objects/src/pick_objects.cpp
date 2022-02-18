@@ -6,16 +6,13 @@
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 // declare the coordinates of interest
-double xPickUp = 9.0 ;
-double yPickUp = 4.0 ;
-double xDropOff = -6.0 ;
-double yDropOff = 4.0;
-
+double Drop_off[3];
+double Pick_up[3];
 
 int main(int argc, char** argv){
   // Initialize the pick_objects node
   ros::init(argc, argv, "pick_objects");
-
+    ros::NodeHandle n;
   //tell the action client that we want to spin a thread by default
   MoveBaseClient ac("move_base", true);
 
@@ -30,10 +27,15 @@ int main(int argc, char** argv){
   goal.target_pose.header.frame_id = "map";
   goal.target_pose.header.stamp = ros::Time::now();
 
+ //get pick up location .
+          n.getParam("/Pick_up/x", Pick_up[0]);
+          n.getParam("/Pick_up/y", Pick_up[1]);
+          n.getParam("/Pick_up/w", Pick_up[2]);
+          
   // Define a position and orientation for the robot to reach
-  goal.target_pose.pose.position.x = xPickUp;
-  goal.target_pose.pose.position.y = yPickUp;
-   goal.target_pose.pose.orientation.w = 1.0;
+  goal.target_pose.pose.position.x = Pick_up[0];
+  goal.target_pose.pose.position.y = Pick_up[1];
+   goal.target_pose.pose.orientation.w = Pick_up[2];
 
    // Send the goal position and orientation for the robot to reach
   ROS_INFO("Sending goal");
@@ -50,11 +52,15 @@ int main(int argc, char** argv){
 
    ros::Duration(5.0).sleep();
  
+      //get drop off location .
+          n.getParam("/Drop_off/x", Drop_off[0]);
+          n.getParam("/Drop_off/y", Drop_off[1]);
+          n.getParam("/Drop_off/w", Drop_off[2]);
 
   // Define a position and orientation for the robot to reach
-  goal.target_pose.pose.position.x = xDropOff;
-  goal.target_pose.pose.position.y = yDropOff;
-   goal.target_pose.pose.orientation.w = 1.0;
+  goal.target_pose.pose.position.x = Drop_off[0];
+  goal.target_pose.pose.position.y = Drop_off[1];
+   goal.target_pose.pose.orientation.w = Drop_off[2];
 
    // Send the goal position and orientation for the robot to reach
   ROS_INFO("Sending goal");
